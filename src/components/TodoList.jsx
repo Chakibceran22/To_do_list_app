@@ -1,20 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import { Trash2, Check, Plus, Moon, Sun } from 'lucide-react';
+import { Trash2, Check, Plus, Moon, Sun, Loader } from 'lucide-react'; // Add Loader icon
+import auth from '../firebase/firebaseAuth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const TodoList = () => {
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState('');
   const [darkMode, setDarkMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [user, setUser] = useState('');
+  const [loading, setLoading] = useState(true); // Loading state
 
   useEffect(() => {
     if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
       setDarkMode(true);
     }
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null); // Set user to null if not logged in
+      }
+      setLoading(false); // Set loading to false once the user state is updated
+    });
+
+    return () => unsubscribe(); // Cleanup the subscription on unmount
   }, []);
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className={`w-16 h-16 border-4 border-t-4 border-${darkMode ? 'gray-300' : 'gray-900'} border-solid rounded-full animate-spin`} style={{ borderTopColor: darkMode ? '#6366F1' : '#3B82F6' }}></div>
+      </div>
+    );
+  }
   const addTodo = async (e) => {
     e.preventDefault();
+    console.log(user)
     if (newTodo.trim()) {
       setIsSubmitting(true);
       // Simulate a small delay to show the loading state
@@ -67,7 +90,7 @@ const TodoList = () => {
               {darkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
           </div>
-          
+
           <form onSubmit={addTodo} className="flex gap-2 mb-6">
             <input
               type="text"

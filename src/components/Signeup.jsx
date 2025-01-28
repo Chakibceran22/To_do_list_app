@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Moon, Sun } from 'lucide-react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { updateProfile } from 'firebase/auth';
+
 import auth from '../firebase/firebaseAuth';
 
 
@@ -12,6 +14,7 @@ const Signeup = () => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
+        name : ''
     });
     const [errors, setErrors] = useState({});
 
@@ -35,6 +38,9 @@ const Signeup = () => {
         } else if (formData.password.length < 6) {
             newErrors.password = 'Password must be at least 6 characters';
         }
+        if(!formData.name){
+            newErrors.name = 'Name is required';
+        }
 
        
 
@@ -42,10 +48,28 @@ const Signeup = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
+        
         if (validateForm()) {
-            console.log('Form submitted:', formData);
+            try{
+                const userCredentials = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+                const user = userCredentials.user
+                await updateProfile(user, {
+                    displayName: formData.name
+                });
+                
+                if(user){
+                    alert("user created successfully")
+                }
+
+            }
+            catch(error){
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+                alert("error : user already exists or server error");
+            }
         }
     };
 
@@ -95,7 +119,31 @@ const Signeup = () => {
                     </div>
 
                     <form onSubmit={handleSubmit}  className="space-y-6">
-
+                        
+                                      <div>
+                                        <div className="relative">
+                                          <User className={`absolute left-3 top-1/2 transform -translate-y-1/2 transition-colors duration-200 ${
+                                            darkMode ? 'text-gray-500' : 'text-gray-400'
+                                          }`} size={20} />
+                                          <input
+                                            type="text"
+                                            name="name"
+                                            value={formData.name}
+                                            onChange={handleChange}
+                                            className={`w-full pl-10 pr-4 py-2 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none transition-all duration-200 border
+                                              ${errors.name ? 'border-red-500' : darkMode ? 'border-gray-600' : 'border-gray-200'}
+                                              ${darkMode 
+                                                ? 'bg-gray-700 text-white border-gray-600 placeholder-gray-400' 
+                                                : 'bg-white text-gray-900 border-gray-200 placeholder-gray-500'
+                                              }`}
+                                            placeholder="Enter your name"
+                                          />
+                                        </div>
+                                        {errors.name && (
+                                          <p className="mt-1 text-sm text-red-500">{errors.name}</p>
+                                        )}
+                                      </div>
+                                
                         
                         <div>
                             <div className="relative">

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Moon, Sun } from 'lucide-react';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import auth from '../firebase/firebaseAuth';
 
 
 const Signeup = () => {
@@ -10,7 +12,6 @@ const Signeup = () => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
-        name: ''
     });
     const [errors, setErrors] = useState({});
 
@@ -35,9 +36,7 @@ const Signeup = () => {
             newErrors.password = 'Password must be at least 6 characters';
         }
 
-        if (!formData.name) {
-            newErrors.name = 'Name is required';
-        }
+       
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -95,32 +94,9 @@ const Signeup = () => {
                         </p>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={handleSubmit}  className="space-y-6">
 
-                        <div>
-                            <div className="relative">
-                                <User className={`absolute left-3 top-1/2 transform -translate-y-1/2 transition-colors duration-200 ${darkMode ? 'text-gray-500' : 'text-gray-400'
-                                    }`} size={20} />
-                                <input
-                                    type="text"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleChange}
-                                    className={`w-full pl-10 pr-4 py-2 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none transition-all duration-200 border
-                      ${errors.name ? 'border-red-500' : darkMode ? 'border-gray-600' : 'border-gray-200'}
-                      ${darkMode
-                                            ? 'bg-gray-700 text-white border-gray-600 placeholder-gray-400'
-                                            : 'bg-white text-gray-900 border-gray-200 placeholder-gray-500'
-                                        }`}
-                                    placeholder="Enter your name"
-                                />
-                            </div>
-                            {errors.name && (
-                                <p className="mt-1 text-sm text-red-500">{errors.name}</p>
-                            )}
-                        </div>
-
-
+                        
                         <div>
                             <div className="relative">
                                 <Mail className={`absolute left-3 top-1/2 transform -translate-y-1/2 transition-colors duration-200 ${darkMode ? 'text-gray-500' : 'text-gray-400'
@@ -179,6 +155,7 @@ const Signeup = () => {
 
                         <button
                             type="submit"
+                            
                             className="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white py-2 rounded-lg 
                 hover:from-purple-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-purple-500 
                 flex items-center justify-center gap-2 group transition-all duration-200 hover:shadow-md"
@@ -192,7 +169,7 @@ const Signeup = () => {
                     </form>
 
                     <div className="mt-6 text-center">
-                        <p className={`text-sm transition-colors duration-200 ${darkMode
+                        <p className={`text-sm transition-colors duration-200  ${darkMode
                                 ? 'text-gray-300 '
                                 : 'text-gray-600 '
                             }`}>Already have an account? <button

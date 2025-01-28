@@ -1,7 +1,9 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import TodoList from './TodoList'
+import TodoList from './components/TodoList'
+import AuthPages from './components/AuthPages'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

@@ -72,6 +72,7 @@ const TodoList = () => {
           { ...newTodoItem, id: docRef.id },
         ]);
         setNewTodo('');
+       
       } catch (error) {
         console.error(error);
       } finally {

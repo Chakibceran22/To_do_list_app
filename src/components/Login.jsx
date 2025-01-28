@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { signInWithEmailAndPassword } from "firebase/auth";
+import auth from '../firebase/firebaseAuth';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Moon, Sun } from 'lucide-react';
 
-const Login = () => {
+const Login = ({setUser}) => {
     const [showPassword, setShowPassword] = useState(false);
     const [darkMode, setDarkMode] = useState(false);
     const navigate = useNavigate();
@@ -38,10 +39,22 @@ const Login = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
         if (validateForm()) {
-            console.log('Form submitted:', formData);
+            try{
+                const userCredentials = await signInWithEmailAndPassword(auth, formData.email, formData.password);
+                const user = userCredentials.user;
+                alert(`Welcome back, ${user.displayName}`);
+                navigate('/');
+            }
+            catch(error){
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+                alert(errorMessage);
+            }
+           
         }
     };
 

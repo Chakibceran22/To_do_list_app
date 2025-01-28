@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Trash2, Check, Plus, Moon, Sun, Loader } from 'lucide-react'; // Add Loader icon
 import auth from '../firebase/firebaseAuth';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import LoadingSpinner from './LoadingSpinner';
 
 const TodoList = () => {
   const [todos, setTodos] = useState([]);
@@ -30,9 +31,7 @@ const TodoList = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className={`w-16 h-16 border-4 border-t-4 border-${darkMode ? 'gray-300' : 'gray-900'} border-solid rounded-full animate-spin`} style={{ borderTopColor: darkMode ? '#6366F1' : '#3B82F6' }}></div>
-      </div>
+      <LoadingSpinner darkMode={darkMode} />
     );
   }
   const addTodo = async (e) => {

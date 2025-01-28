@@ -9,6 +9,7 @@ import Login from "../components/Login";
 import Signeup from "../components/Signeup";
 import { onAuthStateChanged } from "firebase/auth";
 import auth from "../firebase/firebaseAuth";
+import NotFound from "../components/NotFound";
 
 
 
@@ -21,6 +22,7 @@ const AppRouter = () => {
                 <Route path="/auth" element={<AuthPages />} />
                 <Route path="/login" element={<Login  />} />
                 <Route path="/signup" element={<Signeup />} />
+                <Route path="*" element={<NotFound />} />
 
             </Routes>
         </Router>

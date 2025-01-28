@@ -61,6 +61,7 @@ const Signeup = () => {
                 
                 if(user){
                     alert("user created successfully")
+                    navigate('/login');
                 }
 
             }
@@ -98,7 +99,7 @@ const Signeup = () => {
                     <div className="flex justify-end mb-4">
                         <button
                             onClick={() => setDarkMode(!darkMode)}
-                            className={`p-2 rounded-lg transition-colors duration-200 ${darkMode
+                            className={`p-2 rounded-lg transition-colors duration-200 cursor-pointer ${darkMode
                                     ? 'text-yellow-300 hover:bg-gray-700'
                                     : 'text-gray-600 hover:bg-gray-100'
                                 }`}

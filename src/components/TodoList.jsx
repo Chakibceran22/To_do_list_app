@@ -46,6 +46,7 @@ const TodoList = () => {
         fetchData(user.uid); // Fetch data after user is authenticated
       } else {
         setUser(null);
+        navigate('/login');
       }
     });
 

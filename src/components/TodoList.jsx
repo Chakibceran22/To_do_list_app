@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Trash2, Check, Plus, Moon, Sun, LogOut } from 'lucide-react';
 import auth from '../firebase/firebaseAuth';
-import { getAuth, onAuthStateChanged, reload,signOut } from 'firebase/auth';
+import { getAuth, onAuthStateChanged,signOut } from 'firebase/auth';
 import LoadingSpinner from './LoadingSpinner';
 import db from '../firebase/firebaseFirestore';
-import { addDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { addDoc, collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -91,8 +91,15 @@ const TodoList = () => {
     ));
   };
 
-  const deleteTodo = (id) => {
-    setTodos(todos.filter(todo => todo.id !== id));
+  const deleteTodo = async(id) => {
+    const docRef = doc(db, "todos", id);
+    try{
+      await deleteDoc(docRef);
+      setTodos(todos.filter(todo => todo.id !== id));
+      
+    }catch(error){
+      console.log("Error deleting todo:", error);
+    }
   };
 
   const toggleTheme = () => {

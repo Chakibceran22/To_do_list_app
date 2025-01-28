@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Trash2, Check, Plus, Moon, Sun } from 'lucide-react';
+import { Trash2, Check, Plus, Moon, Sun, LogOut } from 'lucide-react';
 import auth from '../firebase/firebaseAuth';
-import { getAuth, onAuthStateChanged, reload } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, reload,signOut } from 'firebase/auth';
 import LoadingSpinner from './LoadingSpinner';
 import db from '../firebase/firebaseFirestore';
 import { addDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+
 
 const TodoList = () => {
   const [todos, setTodos] = useState([]);
@@ -13,6 +15,7 @@ const TodoList = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [user, setUser] = useState('');
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Fetch data function
   const fetchData = async (userId) => {
@@ -72,7 +75,7 @@ const TodoList = () => {
           { ...newTodoItem, id: docRef.id },
         ]);
         setNewTodo('');
-       
+
       } catch (error) {
         console.error(error);
       } finally {
@@ -94,30 +97,50 @@ const TodoList = () => {
   const toggleTheme = () => {
     setDarkMode(!darkMode);
   };
+  const hadleLogout = () => {
+        signOut(auth).then(() => {
+            // Sign-out successful.
+            setUser(null);
+            navigate('/login');
+            
+        })
+        .catch((error) => {
+            // An error happened.
+            console.log(error);
+        });
+  }
 
   return (
-    <div className={`min-h-screen p-8 transition-colors duration-200 ${
-      darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-purple-50 to-blue-50'
-    }`}>
-      <div className={`max-w-md mx-auto rounded-xl shadow-lg overflow-hidden ${
-        darkMode ? 'bg-gray-800' : 'bg-white'
+    <div className={`min-h-screen p-8 transition-colors duration-200 ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-purple-50 to-blue-50'
       }`}>
+      <div className={`max-w-md mx-auto rounded-xl shadow-lg overflow-hidden ${darkMode ? 'bg-gray-800' : 'bg-white'
+        }`}>
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
-            <h1 className={`text-2xl font-bold ${
-              darkMode ? 'text-white' : 'text-gray-800'
-            }`}>Todo List</h1>
-            <button
-              onClick={toggleTheme}
-              className={`p-2 rounded-lg ${
-                darkMode
-                  ? 'text-yellow-300 hover:bg-gray-700'
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
+            <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'
+              }`}>Todo List</h1>
+            <div className="flex items-center gap-2">
+              
+              <button
+                onClick={toggleTheme}
+                className={`p-2 rounded-lg ${darkMode
+                    ? 'text-yellow-300 hover:bg-gray-700'
+                    : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+              >
+                {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+              </button>
+              <button className={`p-2 rounded-lg cursor-pointer ${darkMode
+                    ? 'text-red-600 hover:bg-gray-700 '
+                    : 'text-red-600 hover:bg-gray-100'
+                  }`} onClick={hadleLogout}>
+                <LogOut size={20} />
+              </button>
+
+            </div>
+
           </div>
+
 
           <form onSubmit={addTodo} className="flex gap-2 mb-6">
             <input
@@ -126,11 +149,10 @@ const TodoList = () => {
               onChange={(e) => setNewTodo(e.target.value)}
               placeholder="Add a new todo..."
               disabled={isSubmitting}
-              className={`flex-1 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 ${
-                darkMode
+              className={`flex-1 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 ${darkMode
                   ? 'bg-gray-700 text-white border-gray-600 focus:ring-purple-500 placeholder-gray-400'
                   : 'bg-white border-gray-200 focus:ring-purple-500 text-gray-800'
-              } border disabled:opacity-50 transition-all duration-200`}
+                } border disabled:opacity-50 transition-all duration-200`}
             />
             <button
               type="submit"
@@ -143,8 +165,8 @@ const TodoList = () => {
                   : 'hover:from-purple-600 hover:to-blue-600 hover:shadow-md active:scale-95'
                 }`}
             >
-              <Plus 
-                size={20} 
+              <Plus
+                size={20}
                 className={`transition-transform duration-200 ${isSubmitting ? 'animate-spin' : ''}`}
               />
             </button>
@@ -154,11 +176,10 @@ const TodoList = () => {
             {todos.map(todo => (
               <div
                 key={todo.id}
-                className={`flex items-center gap-3 p-3 rounded-lg group transition-all duration-200 ${
-                  darkMode
+                className={`flex items-center gap-3 p-3 rounded-lg group transition-all duration-200 ${darkMode
                     ? 'bg-gray-700/50 hover:bg-gray-700'
                     : 'bg-gray-50 hover:bg-gray-100'
-                }`}
+                  }`}
               >
                 <button
                   onClick={() => toggleTodo(todo.id)}
@@ -172,23 +193,21 @@ const TodoList = () => {
                   {todo.completed && <Check size={14} className="text-white" />}
                 </button>
 
-                <span className={`flex-1 transition-all duration-200 ${
-                  todo.completed
+                <span className={`flex-1 transition-all duration-200 ${todo.completed
                     ? 'text-gray-500 line-through'
                     : darkMode
                       ? 'text-gray-200'
                       : 'text-gray-800'
-                }`}>
+                  }`}>
                   {todo.text}
                 </span>
 
                 <button
                   onClick={() => deleteTodo(todo.id)}
-                  className={`opacity-0 group-hover:opacity-100 transition-all duration-200 ${
-                    darkMode
+                  className={`opacity-0 group-hover:opacity-100 transition-all duration-200 ${darkMode
                       ? 'text-gray-400 hover:text-red-400'
                       : 'text-gray-400 hover:text-red-500'
-                  }`}
+                    }`}
                 >
                   <Trash2 size={18} />
                 </button>
@@ -197,9 +216,8 @@ const TodoList = () => {
           </div>
 
           {todos.length === 0 && (
-            <p className={`text-center mt-6 ${
-              darkMode ? 'text-gray-400' : 'text-gray-500'
-            }`}>
+            <p className={`text-center mt-6 ${darkMode ? 'text-gray-400' : 'text-gray-500'
+              }`}>
               No todos yet. Add one above!
             </p>
           )}

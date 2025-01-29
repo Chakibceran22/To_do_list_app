@@ -36,6 +36,7 @@ const TodoList = () => {
 
   // Use useEffect to handle authentication and fetch todos when user is set
   useEffect(() => {
+    document.title = 'Todo List - Todo App';
     if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
       setDarkMode(true);
     }

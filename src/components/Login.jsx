@@ -15,6 +15,7 @@ const Login = ({setUser}) => {
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
+        document.title = 'Login - Todo App';
         if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
             setDarkMode(true);
         }

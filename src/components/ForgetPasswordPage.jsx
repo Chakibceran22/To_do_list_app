@@ -12,6 +12,7 @@ const ForgotPassword = () => {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
+    document.title = 'Forgot Password - Todo App';
     if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
       setDarkMode(true);
     }

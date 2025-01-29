@@ -5,6 +5,7 @@ const NotFound = () => {
   const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
+    document.title = '404 - Page Not Found - Todo App';
     if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
       setDarkMode(true);
     }

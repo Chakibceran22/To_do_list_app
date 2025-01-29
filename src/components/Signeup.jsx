@@ -19,6 +19,7 @@ const Signeup = () => {
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
+        document.title = 'Create Account - Todo App';
         if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
             setDarkMode(true);
         }

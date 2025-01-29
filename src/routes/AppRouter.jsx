@@ -9,6 +9,8 @@ import Signeup from "../components/Signeup";
 import { onAuthStateChanged } from "firebase/auth";
 import auth from "../firebase/firebaseAuth";
 import NotFound from "../components/NotFound";
+import ForgotPassword from "../components/ForgetPasswordPage";
+import ResetPassword from "../components/ResetPasswordPage";
 
 
 
@@ -23,6 +25,8 @@ const AppRouter = () => {
                 <Route path="/login" element={<Login  />} />
                 <Route path="/signup" element={<Signeup />} />
                 <Route path="*" element={<NotFound />} />
+                <Route path="/forgotpassword" element={<ForgotPassword/>} />
+                <Route path="/reset" element={<ResetPassword/>}></Route>
                 
 
             </Routes>

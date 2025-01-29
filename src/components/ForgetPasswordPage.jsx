@@ -34,10 +34,13 @@ const ForgotPassword = () => {
     if (validateEmail()) {
       try {
         await sendPasswordResetEmail(auth, email);
+        
         setSuccess(true);
         setError('');
+        
       } catch (error) {
         setError(error.message);
+        console.log(success)
       }
     }
   };

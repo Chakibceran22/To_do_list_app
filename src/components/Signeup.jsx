@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Moon, Sun } from 'lucide-react';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { updateProfile } from 'firebase/auth';
 
 import auth from '../firebase/firebaseAuth';
@@ -62,7 +62,17 @@ const Signeup = () => {
                 
                 if(user){
                     alert("user created successfully")
-                    navigate('/login');
+                    try{
+                        const userCredentials = await signInWithEmailAndPassword(auth, formData.email, formData.password);
+                        const user = userCredentials.user;
+                        navigate('/');
+                    }
+                    catch(error){
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.log(errorCode, errorMessage);
+                        alert("Invalid email or password");
+                    }
                 }
 
             }

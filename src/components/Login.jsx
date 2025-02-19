@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import auth from '../firebase/firebaseAuth';
-import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Moon, Sun } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Moon, Sun, Loader } from 'lucide-react';
 
 const Login = ({setUser}) => {
     const [showPassword, setShowPassword] = useState(false);
     const [darkMode, setDarkMode] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: '',
@@ -31,7 +32,7 @@ const Login = ({setUser}) => {
         }
 
         if (!formData.password) {
-            newErrors.password = 'Password is required'; ew
+            newErrors.password = 'Password is required';
         } else if (formData.password.length < 6) {
             newErrors.password = 'Password must be at least 6 characters';
         }
@@ -43,19 +44,20 @@ const Login = ({setUser}) => {
     const handleSubmit = async(e) => {
         e.preventDefault();
         if (validateForm()) {
-            try{
+            setIsLoading(true);
+            try {
                 const userCredentials = await signInWithEmailAndPassword(auth, formData.email, formData.password);
                 const user = userCredentials.user;
                 alert(`Welcome back, ${user.displayName}`);
                 navigate('/');
-            }
-            catch(error){
+            } catch(error) {
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 console.log(errorCode, errorMessage);
                 alert("Invalid email or password");
+            } finally {
+                setIsLoading(false);
             }
-           
         }
     };
 
@@ -72,6 +74,7 @@ const Login = ({setUser}) => {
             }));
         }
     };
+
     return (
         <div className={`min-h-screen transition-colors duration-200 ${darkMode
                 ? 'bg-gray-900'
@@ -104,8 +107,6 @@ const Login = ({setUser}) => {
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
-
-
                         <div>
                             <div className="relative">
                                 <Mail className={`absolute left-3 top-1/2 transform -translate-y-1/2 transition-colors duration-200 ${darkMode ? 'text-gray-500' : 'text-gray-400'
@@ -170,18 +171,28 @@ const Login = ({setUser}) => {
                             </button>
                         </div>
 
-
                         <button
                             type="submit"
+                            disabled={isLoading}
                             className="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white py-2 rounded-lg 
                       hover:from-purple-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-purple-500 
-                      flex items-center justify-center gap-2 group transition-all duration-200 hover:shadow-md"
+                      flex items-center justify-center gap-2 group transition-all duration-200 hover:shadow-md
+                      disabled:opacity-70 disabled:cursor-not-allowed"
                         >
-                            <span>login</span>
-                            <ArrowRight
-                                size={20}
-                                className="transition-transform group-hover:translate-x-1"
-                            />
+                            {isLoading ? (
+                                <>
+                                    <Loader className="animate-spin" size={20} />
+                                    <span>Logging in...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <span>Login</span>
+                                    <ArrowRight
+                                        size={20}
+                                        className="transition-transform group-hover:translate-x-1"
+                                    />
+                                </>
+                            )}
                         </button>
                     </form>
 
@@ -189,7 +200,7 @@ const Login = ({setUser}) => {
                         <p className={`text-sm transition-colors duration-200 ${darkMode
                                 ? 'text-gray-300 '
                                 : 'text-gray-600 '
-                            }`}>Don't have an account?
+                            }`}>Don't have an account?{' '}
                             <button
                                 onClick={() => {
                                     navigate('/signup');
@@ -200,12 +211,13 @@ const Login = ({setUser}) => {
                                     }`}
                             >
                                 Sign up
-                            </button></p>
-
+                            </button>
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     );
 }
+
 export default Login;
